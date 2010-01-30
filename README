@@ -1,0 +1,66 @@
+= Introduction
+
+This is graphics driver for the WIZ game console
+
+= Building
+
+== Dependencies
+
+You will need the following X development dependencies installed on your
+development system before building this package:
+
+xorg-server > 1.4, xproto, fontsproto, renderproto
+
+== Configuration
+
+Type ./autogen.sh at the command line to automatically generate the
+confguration system.
+
+If you need to change some parameters to the configure  script (such as
+prefix paths), you can re-run configure again after the autogen.sh
+script has completed.  Make sure that you specify the correct host and
+build targets for your cross compiler.  Here is an example:
+
+./configure --build=x86_64-linux --host=arm-linux-gnueabi --target=arm-linux-gnueabi --prefix=/usr/local/toolchain/arm/arm-linux-gnueabi/
+
+This will configure the system to use the 'arm-linux-gnueabi-gcc' compiler.
+
+== Building
+
+After the driver has been configured, it can be built by typing 'make' at
+the command line.
+
+= Using the driver
+
+After building, the driver is located at
+src/.libs/wiz_drv.so
+
+This can be copied diretly to your target.  All X video drivers are located
+in 'usr/lib/xorg/modules/drivers' on target.  Copy the .so there.
+
+To use the driver, you need to configure it in /etc/X11/xorg.conf.
+Add the  following section to your xorg.conf file:
+
+Section "Device"
+   Identifier    "WIZ"
+   Driver        "wiz"
+   Option        "fb"      "/dev/fb0"
+#  Option        "NoAccel" "true"
+EndSection
+
+To change which framebuffer device you want to use, modify the "fb"
+option to point at the device file you want to run on.
+
+To disable accelerations, set the "NoAccel" option to true.
+
+Next, you need to add the "WIZ" device to the screen:
+
+Section "Screen"
+...
+Device        "WIZ"
+EndSection
+
+You do not need to configure a monitor or a mode size -the mode size is
+determined automatically and cannot be changed.
+
+Finally, restart X.
